@@ -1,0 +1,79 @@
+package template_test
+
+import (
+	"database/sql"
+	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/golang/mock/gomock"
+	"github.com/guoapeng/gdbcTemplate/mocks"
+	"github.com/guoapeng/gdbcTemplate/template"
+	"github.com/stretchr/testify/suite"
+	"testing"
+)
+
+func TestGdbcTemplateSuite(t *testing.T) {
+	suite.Run(t, new(GdbcTemplateSuite))
+}
+
+type GdbcTemplateSuite struct {
+	suite.Suite
+	dataSource *mocks.MockDataSource
+	gdbcTemplate template.GdbcTemplate
+}
+
+func (suite *GdbcTemplateSuite) SetupTest() {
+	mockCtrl := gomock.NewController(suite.T())
+	defer mockCtrl.Finish()
+	suite.dataSource = mocks.NewMockDataSource(mockCtrl)
+	suite.gdbcTemplate = template.NewWith(suite.dataSource)
+}
+
+func (suite *GdbcTemplateSuite) TestInsert() {
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		suite.Fail("mock error: '%s'", err)
+	}
+	defer db.Close()
+
+	suite.dataSource.EXPECT().Open().Return(db, nil)
+	mock.ExpectExec("xxx")
+	suite.gdbcTemplate.Insert("xxx", "")
+	if err := mock.ExpectationsWereMet(); err != nil {
+		suite.T().Errorf("there were unfulfilled expectations: %s", err)
+	}
+}
+
+func (suite *GdbcTemplateSuite) TestQueryRow() {
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		suite.Fail("mock error: '%s'", err)
+	}
+	defer db.Close()
+	suite.dataSource.EXPECT().Open().Return(db, nil)
+	mock.ExpectQuery("select .* from OUR_USERS where USER_NAME=").WithArgs("eagle")
+	suite.gdbcTemplate.QueryRow("select * from OUR_USERS where USER_NAME=?", "eagle")
+
+	if err := mock.ExpectationsWereMet(); err != nil {
+		suite.T().Errorf("there were unfulfilled expectations: %s", err)
+	}
+}
+
+func (suite *GdbcTemplateSuite) TestQueryRows() {
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		suite.Fail("mock error: '%s'", err)
+	}
+	defer db.Close()
+	suite.dataSource.EXPECT().Open().Return(db, nil)
+	mock.ExpectQuery("^select .* from TABLE_NAME where USER_NAME=").WithArgs("eagle").
+		WillReturnRows(sqlmock.NewRows([]string{"id", "title"}).
+		AddRow(1, "one").
+		AddRow(2, "two"))
+	suite.gdbcTemplate.QueryForArray("select * from TABLE_NAME where USER_NAME=?", "eagle").Map(func(rows *sql.Rows) (interface{}){ return "test"})
+	if err := mock.ExpectationsWereMet(); err != nil {
+		suite.T().Errorf("there were unfulfilled expectations: %s", err)
+	}
+}
+
+
+
+
