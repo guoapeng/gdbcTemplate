@@ -2,6 +2,7 @@ package mapper
 
 import (
 	"database/sql"
+	"github.com/guoapeng/gdbcTemplate/datasource"
 	"github.com/mufti1/interconv/package"
 	"log"
 	"reflect"
@@ -151,12 +152,14 @@ type RowConvertor interface {
 	ToObject() interface{}
 }
 
-func NewRowConvertor(datarow *sql.Row) RowConvertor {
-	return &rowConvertor{row: datarow}
+func NewRowConvertor(datasource datasource.DataSource, sqlstr string, args []interface{}) RowConvertor {
+	return &rowConvertor{ds: datasource, sqlstr:sqlstr, args: args}
 }
 
 type rowConvertor struct {
-	row    *sql.Row
+	args []interface{}
+	sqlstr string
+	ds       datasource.DataSource
 	mapper RowMapper
 }
 
@@ -171,7 +174,17 @@ func (conv *rowConvertor) MapTo(example interface{}) RowConvertor {
 }
 
 func (conv *rowConvertor) ToObject() interface{} {
-	return conv.mapper(conv.row)
+	if db, err := conv.ds.Open(); err == nil {
+		defer db.Close()
+		datarow := db.QueryRow(conv.sqlstr, conv.args...)
+		if conv.mapper != nil {
+			return conv.mapper(datarow)
+		} else {
+			return nil
+		}
+	} else {
+		return nil
+	}
 }
 
 type RowsConvertor interface {
@@ -180,12 +193,14 @@ type RowsConvertor interface {
 	ToArray() []interface{}
 }
 
-func NewRowsConvertor(datarows *sql.Rows) RowsConvertor {
-	return &rowsConvertor{rows: datarows}
+func NewRowsConvertor(dataSource datasource.DataSource, sqlstr string, args []interface{}) RowsConvertor {
+	return &rowsConvertor{ds: dataSource, sqlstr:sqlstr, args: args }
 }
 
 type rowsConvertor struct {
-	rows       *sql.Rows
+	args []interface{}
+	sqlstr string
+	ds       datasource.DataSource
 	rowsMapper RowsMapper
 }
 
@@ -200,18 +215,31 @@ func (rowsCon *rowsConvertor) MapTo(example interface{}) RowsConvertor {
 }
 
 func (rowsCon *rowsConvertor) ToArray() []interface{} {
-	var items []interface{}
-	defer rowsCon.rows.Close()
-	if rowsCon.rowsMapper == nil {
-		for rowsCon.rows.Next() {
-			item := ColumnMapRowMapper(rowsCon.rows)
-			items = append(items, item)
+	if db, err := rowsCon.ds.Open(); err == nil {
+		defer db.Close()
+
+		dataRows, err := db.Query(rowsCon.sqlstr, rowsCon.args...)
+		if err != nil {
+			log.Fatal(err)
+			log.Printf("scan failed, err:%v \n", err)
 		}
+		var items []interface{}
+		defer dataRows.Close()
+		if rowsCon.rowsMapper == nil {
+			for dataRows.Next() {
+				item := ColumnMapRowMapper(dataRows)
+				items = append(items, item)
+			}
+		} else {
+			for dataRows.Next() {
+				item := rowsCon.rowsMapper(dataRows)
+				items = append(items, item)
+			}
+		}
+		return items
 	} else {
-		for rowsCon.rows.Next() {
-			item := rowsCon.rowsMapper(rowsCon.rows)
-			items = append(items, item)
-		}
+		return nil
 	}
-	return items
+
+
 }

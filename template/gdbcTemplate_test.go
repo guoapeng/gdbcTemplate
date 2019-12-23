@@ -49,8 +49,10 @@ func (suite *GdbcTemplateSuite) TestQueryRow() {
 	}
 	defer db.Close()
 	suite.dataSource.EXPECT().Open().Return(db, nil)
-	mock.ExpectQuery("select .* from OUR_USERS where USER_NAME=").WithArgs("eagle")
-	suite.gdbcTemplate.QueryRow("select * from OUR_USERS where USER_NAME=?", "eagle")
+	mock.ExpectQuery("select .* from OUR_USERS where USER_NAME=?").WithArgs("eagle").
+	WillReturnRows(sqlmock.NewRows([]string{"id", "title"}).
+		AddRow(1, "one"))
+	suite.gdbcTemplate.QueryRow("select * from OUR_USERS where USER_NAME=?", "eagle").Map(func(rows *sql.Row) (interface{}){ return "test"}).ToObject()
 
 	if err := mock.ExpectationsWereMet(); err != nil {
 		suite.T().Errorf("there were unfulfilled expectations: %s", err)
@@ -68,7 +70,7 @@ func (suite *GdbcTemplateSuite) TestQueryRows() {
 		WillReturnRows(sqlmock.NewRows([]string{"id", "title"}).
 		AddRow(1, "one").
 		AddRow(2, "two"))
-	suite.gdbcTemplate.QueryForArray("select * from TABLE_NAME where USER_NAME=?", "eagle").Map(func(rows *sql.Rows) (interface{}){ return "test"})
+	suite.gdbcTemplate.QueryForArray("select * from TABLE_NAME where USER_NAME=?", "eagle").Map(func(rows *sql.Rows) (interface{}){ return "test"}).ToArray()
 	if err := mock.ExpectationsWereMet(); err != nil {
 		suite.T().Errorf("there were unfulfilled expectations: %s", err)
 	}

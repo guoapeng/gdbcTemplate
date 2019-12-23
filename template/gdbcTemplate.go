@@ -6,8 +6,9 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/guoapeng/gdbcTemplate/datasource"
 	"github.com/guoapeng/gdbcTemplate/mapper"
+
+	//"github.com/guoapeng/gdbcTemplate/mapper"
 	"github.com/guoapeng/props"
-	"log"
 )
 
 type GdbcTemplate interface {
@@ -53,27 +54,13 @@ func (template *gdbcTemplate) Insert(sql string, args ...interface{}) (sql.Resul
 }
 
 func (template *gdbcTemplate) QueryForArray(sql string, args ...interface{}) mapper.RowsConvertor {
-	if db, err := template.datasource.Open(); err == nil {
-		defer db.Close()
-		datarows, err := db.Query(sql, args...)
-		if err != nil {
-			log.Fatal(err)
-			log.Printf("scan failed, err:%v \n", err)
-		}
-		return mapper.NewRowsConvertor(datarows)
-	} else {
-		return mapper.NewRowsConvertor(nil)
-	}
+	return mapper.NewRowsConvertor(template.datasource, sql, args)
+
 }
 
 func (template *gdbcTemplate) QueryRow(sql string, args ...interface{}) (mapper.RowConvertor) {
-	if db, err := template.datasource.Open(); err == nil {
-		defer db.Close()
-		datarow := db.QueryRow(sql, args...)
-		return mapper.NewRowConvertor(datarow)
-	} else {
-		return mapper.NewRowConvertor(nil)
-	}
+	return mapper.NewRowConvertor(template.datasource, sql, args)
+
 }
 
 func New(appName string) GdbcTemplate {
