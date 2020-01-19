@@ -42,8 +42,6 @@ func (template *gdbcTemplate) Execute(sqlstr string, args ...interface{}) (sql.R
 	}
 }
 
-
-
 func (template *gdbcTemplate) Insert(sql string, args ...interface{}) (sql.Result, error) {
 	if db, err := template.datasource.Open(); err == nil {
 		result, err := db.Exec(sql, args...)
@@ -58,18 +56,13 @@ func (template *gdbcTemplate) QueryForArray(sql string, args ...interface{}) map
 
 }
 
-func (template *gdbcTemplate) QueryRow(sql string, args ...interface{}) (mapper.RowConvertor) {
+func (template *gdbcTemplate) QueryRow(sql string, args ...interface{}) mapper.RowConvertor {
 	return mapper.NewRowConvertor(template.datasource, sql, args)
 
 }
 
-func New(appName string) GdbcTemplate {
-	if appCinfig, err := propsReader.New(appName); err == nil {
-		return &gdbcTemplate{datasource: datasource.NewDataSource(appCinfig)}
-	} else {
-		panic("failed to create gdbcTemplate")
-		return nil
-	}
+func New(appConf propsReader.AppConfigProperties) GdbcTemplate {
+	return &gdbcTemplate{datasource: datasource.NewDataSource(appConf)}
 }
 
 func NewWith(ds datasource.DataSource) GdbcTemplate {
