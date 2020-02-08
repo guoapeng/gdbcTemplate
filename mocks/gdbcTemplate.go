@@ -48,9 +48,9 @@ func (m *MockGdbcTemplate) Insert(sqlstr string, args ...interface{}) (sql.Resul
 }
 
 // Insert indicates an expected call of Insert
-func (mr *MockGdbcTemplateMockRecorder) Insert(sql interface{}, args ...interface{}) *gomock.Call {
+func (mr *MockGdbcTemplateMockRecorder) Insert(sqlstr interface{}, args ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{sql}, args...)
+	varargs := append([]interface{}{sqlstr}, args...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Insert", reflect.TypeOf((*MockGdbcTemplate)(nil).Insert), varargs...)
 }
 
@@ -68,9 +68,9 @@ func (m *MockGdbcTemplate) Update(sqlstr string, args ...interface{}) (sql.Resul
 }
 
 // Update indicates an expected call of Update
-func (mr *MockGdbcTemplateMockRecorder) Update(sql interface{}, args ...interface{}) *gomock.Call {
+func (mr *MockGdbcTemplateMockRecorder) Update(sqlstr interface{}, args ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{sql}, args...)
+	varargs := append([]interface{}{sqlstr}, args...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockGdbcTemplate)(nil).Update), varargs...)
 }
 
@@ -88,16 +88,16 @@ func (m *MockGdbcTemplate) Execute(sqlstr string, args ...interface{}) (sql.Resu
 }
 
 // Execute indicates an expected call of Execute
-func (mr *MockGdbcTemplateMockRecorder) Execute(sql interface{}, args ...interface{}) *gomock.Call {
+func (mr *MockGdbcTemplateMockRecorder) Execute(sqlstr interface{}, args ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{sql}, args...)
+	varargs := append([]interface{}{sqlstr}, args...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Execute", reflect.TypeOf((*MockGdbcTemplate)(nil).Execute), varargs...)
 }
 
 // QueryForArray mocks base method
-func (m *MockGdbcTemplate) QueryForArray(sql string, args ...interface{}) mapper.RowsConvertor {
+func (m *MockGdbcTemplate) QueryForArray(sqlstr string, args ...interface{}) mapper.RowsConvertor {
 	m.ctrl.T.Helper()
-	varargs := []interface{}{sql}
+	varargs := []interface{}{sqlstr}
 	for _, a := range args {
 		varargs = append(varargs, a)
 	}
@@ -107,16 +107,16 @@ func (m *MockGdbcTemplate) QueryForArray(sql string, args ...interface{}) mapper
 }
 
 // QueryForArray indicates an expected call of QueryForArray
-func (mr *MockGdbcTemplateMockRecorder) QueryForArray(sql interface{}, args ...interface{}) *gomock.Call {
+func (mr *MockGdbcTemplateMockRecorder) QueryForArray(sqlstr interface{}, args ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{sql}, args...)
+	varargs := append([]interface{}{sqlstr}, args...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "QueryForArray", reflect.TypeOf((*MockGdbcTemplate)(nil).QueryForArray), varargs...)
 }
 
 // QueryRow mocks base method
-func (m *MockGdbcTemplate) QueryRow(sql string, args ...interface{}) mapper.RowConvertor {
+func (m *MockGdbcTemplate) QueryRow(sqlstr string, args ...interface{}) mapper.RowConvertor {
 	m.ctrl.T.Helper()
-	varargs := []interface{}{sql}
+	varargs := []interface{}{sqlstr}
 	for _, a := range args {
 		varargs = append(varargs, a)
 	}
@@ -126,8 +126,8 @@ func (m *MockGdbcTemplate) QueryRow(sql string, args ...interface{}) mapper.RowC
 }
 
 // QueryRow indicates an expected call of QueryRow
-func (mr *MockGdbcTemplateMockRecorder) QueryRow(sql interface{}, args ...interface{}) *gomock.Call {
+func (mr *MockGdbcTemplateMockRecorder) QueryRow(sqlstr interface{}, args ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{sql}, args...)
+	varargs := append([]interface{}{sqlstr}, args...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "QueryRow", reflect.TypeOf((*MockGdbcTemplate)(nil).QueryRow), varargs...)
 }
