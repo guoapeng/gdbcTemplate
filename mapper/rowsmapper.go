@@ -217,14 +217,13 @@ func (rowsCon *rowsConvertor) MapTo(example interface{}) RowsConvertor {
 func (rowsCon *rowsConvertor) ToArray() []interface{} {
 	if db, err := rowsCon.ds.Open(); err == nil {
 		defer db.Close()
-
 		dataRows, err := db.Query(rowsCon.sqlstr, rowsCon.args...)
 		if err != nil {
 			log.Fatal(err)
 			log.Printf("scan failed, err:%v \n", err)
 		}
-		var items []interface{}
 		defer dataRows.Close()
+		var items []interface{}
 		if rowsCon.rowsMapper == nil {
 			for dataRows.Next() {
 				item := ColumnMapRowMapper(dataRows)
