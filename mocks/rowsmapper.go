@@ -86,9 +86,9 @@ func (m *MockRowConvertor) EXPECT() *MockRowConvertorMockRecorder {
 }
 
 // Map mocks base method
-func (m *MockRowConvertor) Map(mapper mapper.RowMapper) mapper.RowConvertor {
+func (m *MockRowConvertor) Map(example mapper.RowMapper) mapper.RowConvertor {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Map", mapper)
+	ret := m.ctrl.Call(m, "Map", example)
 	ret0, _ := ret[0].(mapper.RowConvertor)
 	return ret0
 }
@@ -151,9 +151,9 @@ func (m *MockRowsConvertor) EXPECT() *MockRowsConvertorMockRecorder {
 }
 
 // Map mocks base method
-func (m *MockRowsConvertor) Map(mapper mapper.RowsMapper) mapper.RowsConvertor {
+func (m *MockRowsConvertor) Map(example mapper.RowsMapper) mapper.RowsConvertor {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Map", mapper)
+	ret := m.ctrl.Call(m, "Map", example)
 	ret0, _ := ret[0].(mapper.RowsConvertor)
 	return ret0
 }
