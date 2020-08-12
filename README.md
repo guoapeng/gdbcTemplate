@@ -11,6 +11,7 @@ cd <project_home>
 echo $PATH
 cp mockgen.exe <User.Home>\go\bin\   #e.g. User.Home = C:\Users\user\
 mockgen -destination mocks/gdbcTemplate.go -package mocks -source template/gdbcTemplate.go
+mockgen -destination mocks/rowsmapper.go -package mocks -source mapper/rowsmapper.go
 
 ```
 
