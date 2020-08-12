@@ -1,7 +1,8 @@
 
 
 ## generate mock class
-The file mocks/gdbcTemplate.go is generated file by the following approach  
+The file mocks/gdbcTemplate.go  and mapper/rowsmapper.go
+are generated file by the following approach  
 ```bash
 cd <project_home>
 go get github.com/golang/mock/mockgen
@@ -25,5 +26,14 @@ mockgen -destination mocks/rowsmapper.go -package mocks -source mapper/rowsmappe
 ```bash
     git push origin --tags
 ```
+
+trouble shooting 
+in case you encountered the issue:
+$ go build
+build .: cannot find module for path .
+
+solution:
+replace the go build command like 
+$ go build mapper/rowsmapper.go
 
 
