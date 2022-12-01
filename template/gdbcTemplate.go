@@ -3,12 +3,10 @@ package template
 import (
 	"database/sql"
 	"errors"
-	_ "github.com/go-sql-driver/mysql"
+
 	"github.com/guoapeng/gdbcTemplate/datasource"
 	"github.com/guoapeng/gdbcTemplate/mapper"
-
-	//"github.com/guoapeng/gdbcTemplate/mapper"
-	"github.com/guoapeng/props"
+	propsReader "github.com/guoapeng/props"
 )
 
 type GdbcTemplate interface {
