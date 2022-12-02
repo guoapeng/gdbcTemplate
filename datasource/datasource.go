@@ -39,11 +39,14 @@ type dataSource struct {
 func (ds *dataSource) Open() (*sql.DB, error) {
 	dsn := fmt.Sprintf("%s:%s@%s(%s:%d)/%s?charset=%s", ds.UserName, ds.Password, ds.Network, ds.Server,
 		ds.Port, ds.DataBase, ds.Charset)
+	log.Printf("connecting to %s:%s@%s(%s:%d)/%s?charset=%s\n", ds.UserName, "****", ds.Network, ds.Server,
+		ds.Port, ds.DataBase, ds.Charset)
 	db, err := sql.Open(ds.DriverName, dsn)
 	if err != nil {
 		log.Printf("Open database failed,err:%v\n", err)
 		return nil, err
 	} else {
+		log.Printf("connected to the database successfully!\n")
 		db.SetConnMaxLifetime(100 * time.Second)
 		db.SetMaxOpenConns(100)
 		db.SetMaxIdleConns(16)
