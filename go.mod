@@ -4,8 +4,8 @@ go 1.18
 
 require (
 	github.com/DATA-DOG/go-sqlmock v1.3.3
-	github.com/golang/mock v1.3.1
-	github.com/guoapeng/props v1.1.1
+	github.com/golang/mock v1.6.0
+	github.com/guoapeng/props v1.1.2
 	github.com/mufti1/interconv v0.0.0-20190313040840-d7c72925c656
 	github.com/stretchr/testify v1.8.1
 )

@@ -62,7 +62,7 @@ func (template *gdbcTemplate) QueryRow(sqlstr string, args ...interface{}) mappe
 }
 
 func New(appConf propsReader.AppConfigProperties) GdbcTemplate {
-	return &gdbcTemplate{datasource: datasource.NewDataSource(appConf)}
+	return &gdbcTemplate{datasource: datasource.NewDataSource(appConf, datasource.NewConnManager())}
 }
 
 func NewWith(ds datasource.DataSource) GdbcTemplate {

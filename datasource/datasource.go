@@ -26,22 +26,24 @@ type DataSource interface {
 }
 
 type dataSource struct {
-	DriverName string
-	UserName   string
-	Password   string
-	Network    string
-	Server     string
-	Port       int
-	DataBase   string
-	Charset    string
+	DriverName  string
+	UserName    string
+	Password    string
+	Network     string
+	Server      string
+	Port        int
+	DataBase    string
+	Charset     string
+	connManager ConnManager
 }
 
 func (ds *dataSource) Open() (*sql.DB, error) {
-	dsn := fmt.Sprintf("%s:%s@%s(%s:%d)/%s?charset=%s", ds.UserName, ds.Password, ds.Network, ds.Server,
-		ds.Port, ds.DataBase, ds.Charset)
-	log.Printf("connecting to %s:%s@%s(%s:%d)/%s?charset=%s\n", ds.UserName, "****", ds.Network, ds.Server,
-		ds.Port, ds.DataBase, ds.Charset)
-	db, err := sql.Open(ds.DriverName, dsn)
+
+	dsn, maskedDsn := ds.format()
+
+	log.Printf("connecting to %s\n", maskedDsn)
+
+	db, err := ds.connManager.Open(ds.DriverName, dsn)
 	if err != nil {
 		log.Printf("Open database failed,err:%v\n", err)
 		return nil, err
@@ -54,11 +56,40 @@ func (ds *dataSource) Open() (*sql.DB, error) {
 	}
 }
 
-func NewDataSource(appConf propsReader.AppConfigProperties) DataSource {
+func (ds *dataSource) format() (string, string) {
+
+	if ds.DriverName == "mysql" {
+		dsn := fmt.Sprintf("%s:%s@%s(%s:%d)/%s?charset=%s", ds.UserName, ds.Password, ds.Network, ds.Server,
+			ds.Port, ds.DataBase, ds.Charset)
+
+		maskedDsn := fmt.Sprintf("%s:%s@%s(%s:%d)/%s?charset=%s", ds.UserName, "******", ds.Network, ds.Server,
+			ds.Port, ds.DataBase, ds.Charset)
+		return dsn, maskedDsn
+	} else {
+		dsn := fmt.Sprintf("postgres://%s:%s@%s:%d/%s", ds.UserName, ds.Password, ds.Server,
+			ds.Port, ds.DataBase)
+
+		maskedDsn := fmt.Sprintf("postgres://%s:%s@%s:%d/%s", ds.UserName, "******", ds.Server,
+			ds.Port, ds.DataBase)
+
+		return dsn, maskedDsn
+	}
+
+}
+
+func NewDataSource(appConf propsReader.AppConfigProperties, connManager ConnManager) DataSource {
 	port, errp := strconv.Atoi(appConf.Get(PORT))
 	if errp == nil {
-		return &dataSource{DriverName: appConf.Get(DRIVER_NAME), UserName: appConf.Get(USERNAME), Password: appConf.Get(PASSWORD),
-			Network: appConf.Get(NETWORK), Server: appConf.Get(SERVER), Port: port, DataBase: appConf.Get(DATABASE), Charset: appConf.Get(CHARSET)}
+		return &dataSource{DriverName: appConf.Get(DRIVER_NAME),
+			UserName:    appConf.Get(USERNAME),
+			Password:    appConf.Get(PASSWORD),
+			Network:     appConf.Get(NETWORK),
+			Server:      appConf.Get(SERVER),
+			Port:        port,
+			DataBase:    appConf.Get(DATABASE),
+			Charset:     appConf.Get(CHARSET),
+			connManager: connManager,
+		}
 	} else {
 		panic("failed to create data source due to invalid port number")
 	}
