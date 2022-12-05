@@ -2,31 +2,32 @@ package mapper
 
 import (
 	"database/sql"
-	"github.com/guoapeng/gdbcTemplate/datasource"
-	"github.com/mufti1/interconv/package"
 	"log"
 	"reflect"
 	"strconv"
+
+	"github.com/guoapeng/gdbcTemplate/datasource"
+	interconv "github.com/mufti1/interconv/package"
 )
 
-type RowsMapper func(rows *sql.Rows) (interface{})
+type RowsMapper func(rows *sql.Rows) interface{}
 
-type RowMapper func(row *sql.Row) (interface{})
+type RowMapper func(row *sql.Row) interface{}
 
 type BeanPropertyRowMapper interface {
-	RowMapper(row *sql.Row) (interface{})
-	RowsMapper(rows *sql.Rows) (interface{})
+	RowMapper(row *sql.Row) interface{}
+	RowsMapper(rows *sql.Rows) interface{}
 }
 
 type beanPropertyRowMapper struct {
 	Typ reflect.Type
 }
 
-func NewBeanPropertyRowMapper(example interface{}) BeanPropertyRowMapper{
-	return &beanPropertyRowMapper{Typ:reflect.TypeOf(example)}
+func NewBeanPropertyRowMapper(example interface{}) BeanPropertyRowMapper {
+	return &beanPropertyRowMapper{Typ: reflect.TypeOf(example)}
 }
 
-func ColumnMapRowMapper(rows *sql.Rows) (interface{}) {
+func ColumnMapRowMapper(rows *sql.Rows) interface{} {
 	columns, _ := rows.Columns()
 	columnLength := len(columns)
 	cache := make([]interface{}, columnLength)
@@ -42,8 +43,7 @@ func ColumnMapRowMapper(rows *sql.Rows) (interface{}) {
 	return item
 }
 
-
-func (mapper *beanPropertyRowMapper) RowMapper(row *sql.Row) (interface{}) {
+func (mapper *beanPropertyRowMapper) RowMapper(row *sql.Row) interface{} {
 	out := reflect.New(mapper.Typ).Elem().Interface()
 	ss := reflect.ValueOf(out).Elem()
 	columnLength := ss.Len()
@@ -59,7 +59,7 @@ func (mapper *beanPropertyRowMapper) RowMapper(row *sql.Row) (interface{}) {
 		item[ss.Type().Field(i).Name] = *data.(*interface{})
 	}
 	for i := 0; i < ss.NumField(); i++ {
-		val, _ :=  interconv.ParseString(item[ss.Type().Field(i).Tag.Get("sql")])
+		val, _ := interconv.ParseString(item[ss.Type().Field(i).Tag.Get("sql")])
 		name := ss.Type().Field(i).Name
 		log.Printf("tag:%s, tag value:%s, filed name:%s", ss.Type().Field(i).Tag.Get("sql"), val, name)
 		switch ss.Field(i).Kind() {
@@ -95,7 +95,7 @@ func (mapper *beanPropertyRowMapper) RowMapper(row *sql.Row) (interface{}) {
 	return out
 }
 
-func (mapper *beanPropertyRowMapper) RowsMapper(rows *sql.Rows) (interface{}) {
+func (mapper *beanPropertyRowMapper) RowsMapper(rows *sql.Rows) interface{} {
 	columns, _ := rows.Columns()
 	columnLength := len(columns)
 	cache := make([]interface{}, columnLength)
@@ -111,7 +111,7 @@ func (mapper *beanPropertyRowMapper) RowsMapper(rows *sql.Rows) (interface{}) {
 		item[columns[i]] = *data.(*interface{})
 	}
 	for i := 0; i < ss.NumField(); i++ {
-		val, err :=  interconv.ParseString(item[ss.Type().Field(i).Tag.Get("sql")])
+		val, err := interconv.ParseString(item[ss.Type().Field(i).Tag.Get("sql")])
 		log.Println(err)
 		name := ss.Type().Field(i).Name
 		log.Printf("tag:%s, tag value:%s, field name:%s", ss.Type().Field(i).Tag.Get("sql"), val, name)
@@ -153,13 +153,13 @@ type RowConvertor interface {
 }
 
 func NewRowConvertor(datasource datasource.DataSource, sqlstr string, args []interface{}) RowConvertor {
-	return &rowConvertor{ds: datasource, sqlstr:sqlstr, args: args}
+	return &rowConvertor{ds: datasource, sqlstr: sqlstr, args: args}
 }
 
 type rowConvertor struct {
-	args []interface{}
+	args   []interface{}
 	sqlstr string
-	ds       datasource.DataSource
+	ds     datasource.DataSource
 	mapper RowMapper
 }
 
@@ -176,6 +176,7 @@ func (conv *rowConvertor) MapTo(example interface{}) RowConvertor {
 func (conv *rowConvertor) ToObject() interface{} {
 	if db, err := conv.ds.Open(); err == nil {
 		defer db.Close()
+		log.Println("query using sql: ", conv.sqlstr)
 		datarow := db.QueryRow(conv.sqlstr, conv.args...)
 		if conv.mapper != nil {
 			return conv.mapper(datarow)
@@ -194,13 +195,13 @@ type RowsConvertor interface {
 }
 
 func NewRowsConvertor(dataSource datasource.DataSource, sqlstr string, args []interface{}) RowsConvertor {
-	return &rowsConvertor{ds: dataSource, sqlstr:sqlstr, args: args }
+	return &rowsConvertor{ds: dataSource, sqlstr: sqlstr, args: args}
 }
 
 type rowsConvertor struct {
-	args []interface{}
-	sqlstr string
-	ds       datasource.DataSource
+	args       []interface{}
+	sqlstr     string
+	ds         datasource.DataSource
 	rowsMapper RowsMapper
 }
 
@@ -217,10 +218,11 @@ func (rowsCon *rowsConvertor) MapTo(example interface{}) RowsConvertor {
 func (rowsCon *rowsConvertor) ToArray() []interface{} {
 	if db, err := rowsCon.ds.Open(); err == nil {
 		defer db.Close()
+		log.Println("query using sql: ", rowsCon.sqlstr)
 		dataRows, err := db.Query(rowsCon.sqlstr, rowsCon.args...)
 		if err != nil {
-			log.Fatal(err)
 			log.Printf("scan failed, err:%v \n", err)
+			return nil
 		}
 		defer dataRows.Close()
 		var items []interface{}
@@ -239,6 +241,5 @@ func (rowsCon *rowsConvertor) ToArray() []interface{} {
 	} else {
 		return nil
 	}
-
 
 }

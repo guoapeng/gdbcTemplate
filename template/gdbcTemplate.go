@@ -3,6 +3,7 @@ package template
 import (
 	"database/sql"
 	"errors"
+	"log"
 
 	"github.com/guoapeng/gdbcTemplate/datasource"
 	"github.com/guoapeng/gdbcTemplate/mapper"
@@ -25,6 +26,7 @@ type gdbcTemplate struct {
 func (template *gdbcTemplate) Update(sqlstr string, args ...interface{}) (sql.Result, error) {
 	if db, err := template.datasource.Open(); err == nil {
 		defer db.Close()
+		log.Println("update using sql: ", sqlstr)
 		result, updErr := db.Exec(sqlstr, args...)
 		return result, updErr
 	} else {
@@ -35,6 +37,7 @@ func (template *gdbcTemplate) Update(sqlstr string, args ...interface{}) (sql.Re
 func (template *gdbcTemplate) Execute(sqlstr string, args ...interface{}) (sql.Result, error) {
 	if db, err := template.datasource.Open(); err == nil {
 		defer db.Close()
+		log.Println("Execute using sql: ", sqlstr)
 		result, err := db.Exec(sqlstr, args...)
 		return result, err
 	} else {
@@ -45,6 +48,7 @@ func (template *gdbcTemplate) Execute(sqlstr string, args ...interface{}) (sql.R
 func (template *gdbcTemplate) Insert(sqlstr string, args ...interface{}) (sql.Result, error) {
 	if db, err := template.datasource.Open(); err == nil {
 		defer db.Close()
+		log.Println("Insert using sql: ", sqlstr)
 		result, err := db.Exec(sqlstr, args...)
 		return result, err
 	} else {
