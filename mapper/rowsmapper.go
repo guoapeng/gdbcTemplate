@@ -176,8 +176,11 @@ func (conv *rowConvertor) MapTo(example interface{}) RowConvertor {
 func (conv *rowConvertor) ToObject() interface{} {
 	if db, err := conv.ds.Open(); err == nil {
 		defer db.Close()
-		log.Println("query using sql: ", conv.sqlstr)
+		log.Println("query using sql: ", conv.sqlstr, " \nwith arguments", conv.args)
 		datarow := db.QueryRow(conv.sqlstr, conv.args...)
+		if datarow.Err() != nil {
+			log.Println("Encountering query error: ", datarow.Err())
+		}
 		if conv.mapper != nil {
 			return conv.mapper(datarow)
 		} else {
