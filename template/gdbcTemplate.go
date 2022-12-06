@@ -39,6 +39,9 @@ func (template *gdbcTemplate) Execute(sqlstr string, args ...interface{}) (sql.R
 		defer db.Close()
 		log.Println("Execute using sql: ", sqlstr)
 		result, err := db.Exec(sqlstr, args...)
+		if err != nil {
+			log.Println("Encountering error when execting sql: ", sqlstr, err)
+		}
 		return result, err
 	} else {
 		return nil, errors.New("failed to open db")
@@ -50,6 +53,9 @@ func (template *gdbcTemplate) Insert(sqlstr string, args ...interface{}) (sql.Re
 		defer db.Close()
 		log.Println("Insert using sql: ", sqlstr)
 		result, err := db.Exec(sqlstr, args...)
+		if err != nil {
+			log.Println("Encountering error when execting sql: ", sqlstr, err)
+		}
 		return result, err
 	} else {
 		return nil, errors.New("failed to open db")
