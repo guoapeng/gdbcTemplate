@@ -5,6 +5,7 @@ import (
 	"log"
 	"reflect"
 	"strconv"
+	"strings"
 
 	"github.com/guoapeng/gdbcTemplate/datasource"
 	interconv "github.com/mufti1/interconv/package"
@@ -38,7 +39,7 @@ func ColumnMapRowMapper(rows *sql.Rows) interface{} {
 	_ = rows.Scan(cache...)
 	item := make(map[string]interface{})
 	for i, data := range cache {
-		item[columns[i]] = *data.(*interface{}) //取实际类型
+		item[strings.ToUpper(columns[i])] = *data.(*interface{}) //取实际类型
 	}
 	return item
 }
@@ -56,10 +57,10 @@ func (mapper *beanPropertyRowMapper) RowMapper(row *sql.Row) interface{} {
 
 	item := make(map[string]interface{})
 	for i, data := range cache {
-		item[ss.Type().Field(i).Name] = *data.(*interface{})
+		item[strings.ToUpper(ss.Type().Field(i).Name)] = *data.(*interface{})
 	}
 	for i := 0; i < ss.NumField(); i++ {
-		val, _ := interconv.ParseString(item[ss.Type().Field(i).Tag.Get("sql")])
+		val, _ := interconv.ParseString(item[strings.ToUpper(ss.Type().Field(i).Tag.Get("sql"))])
 		name := ss.Type().Field(i).Name
 		log.Printf("tag:%s, tag value:%s, filed name:%s", ss.Type().Field(i).Tag.Get("sql"), val, name)
 		switch ss.Field(i).Kind() {
@@ -108,10 +109,10 @@ func (mapper *beanPropertyRowMapper) RowsMapper(rows *sql.Rows) interface{} {
 	ss := reflect.ValueOf(out).Elem()
 	item := make(map[string]interface{})
 	for i, data := range cache {
-		item[columns[i]] = *data.(*interface{})
+		item[strings.ToUpper(columns[i])] = *data.(*interface{})
 	}
 	for i := 0; i < ss.NumField(); i++ {
-		val, err := interconv.ParseString(item[ss.Type().Field(i).Tag.Get("sql")])
+		val, err := interconv.ParseString(item[strings.ToUpper(ss.Type().Field(i).Tag.Get("sql"))])
 		log.Println(err)
 		name := ss.Type().Field(i).Name
 		log.Printf("tag:%s, tag value:%s, field name:%s", ss.Type().Field(i).Tag.Get("sql"), val, name)
