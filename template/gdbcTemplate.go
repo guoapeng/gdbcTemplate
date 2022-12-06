@@ -26,7 +26,7 @@ type gdbcTemplate struct {
 func (template *gdbcTemplate) Update(sqlstr string, args ...interface{}) (sql.Result, error) {
 	if db, err := template.datasource.Open(); err == nil {
 		defer db.Close()
-		log.Println("update using sql: ", sqlstr)
+		log.Println("update using sql: ", sqlstr, "with arguements\n", args)
 		result, updErr := db.Exec(sqlstr, args...)
 		return result, updErr
 	} else {
@@ -37,7 +37,7 @@ func (template *gdbcTemplate) Update(sqlstr string, args ...interface{}) (sql.Re
 func (template *gdbcTemplate) Execute(sqlstr string, args ...interface{}) (sql.Result, error) {
 	if db, err := template.datasource.Open(); err == nil {
 		defer db.Close()
-		log.Println("Execute using sql: ", sqlstr)
+		log.Println("Execute using sql: ", sqlstr, "with arguements\n", args)
 		result, err := db.Exec(sqlstr, args...)
 		if err != nil {
 			log.Println("Encountering error when execting sql: ", sqlstr, err)
@@ -51,7 +51,7 @@ func (template *gdbcTemplate) Execute(sqlstr string, args ...interface{}) (sql.R
 func (template *gdbcTemplate) Insert(sqlstr string, args ...interface{}) (sql.Result, error) {
 	if db, err := template.datasource.Open(); err == nil {
 		defer db.Close()
-		log.Println("Insert using sql: ", sqlstr)
+		log.Println("Insert using sql: ", sqlstr, "with arguements\n", args)
 		result, err := db.Exec(sqlstr, args...)
 		if err != nil {
 			log.Println("Encountering error when execting sql: ", sqlstr, err)
