@@ -229,7 +229,7 @@ func (rowsCon *rowsConvertor) ToArray() []interface{} {
 			return nil
 		}
 		defer dataRows.Close()
-		var items []interface{}
+		items := []interface{}{}
 		if rowsCon.rowsMapper == nil {
 			for dataRows.Next() {
 				item := ColumnMapRowMapper(dataRows)
