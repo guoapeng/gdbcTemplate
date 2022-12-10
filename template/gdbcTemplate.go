@@ -28,8 +28,8 @@ func (template *gdbcTemplate) Update(sqlstr string, args ...interface{}) (sql.Re
 		defer db.Close()
 		log.Println("update using sql: ", sqlstr, "\nwith arguments ", args)
 		result, updErr := db.Exec(sqlstr, args...)
-		if err != nil {
-			log.Println("Encountering error when execting sql: ", err)
+		if updErr != nil {
+			log.Println("Encountering error when execting sql: ", updErr)
 		}
 		return result, updErr
 	} else {
