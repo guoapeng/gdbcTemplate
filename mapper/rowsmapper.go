@@ -222,7 +222,7 @@ func (rowsCon *rowsConvertor) MapTo(example interface{}) RowsConvertor {
 func (rowsCon *rowsConvertor) ToArray() []interface{} {
 	if db, err := rowsCon.ds.Open(); err == nil {
 		defer db.Close()
-		log.Println("query using sql: ", rowsCon.sqlstr, "\nwith arguments ", args)
+		log.Println("query using sql: ", rowsCon.sqlstr, "\nwith arguments ", rowsCon.args)
 		dataRows, err := db.Query(rowsCon.sqlstr, rowsCon.args...)
 		if err != nil {
 			log.Printf("scan failed, err:%v \n", err)
