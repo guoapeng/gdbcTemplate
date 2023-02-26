@@ -76,7 +76,7 @@ cd <project_home>
 
 mockgen -destination mocks/gdbcTemplate.go -package mocks -source template/gdbcTemplate.go
 mockgen -destination mocks/rowsmapper.go -package mocks -source mapper/rowsmapper.go
-$mockgen -destination mocks/appConfig.go -package mocks github.com/guoapeng/props AppConfigProperties
+mockgen -destination mocks/appConfig.go -package mocks github.com/guoapeng/props AppConfigProperties
 
 ```
 

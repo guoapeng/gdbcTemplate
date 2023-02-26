@@ -164,8 +164,8 @@ type rowConvertor struct {
 	mapper RowMapper
 }
 
-func (conv *rowConvertor) Map(mapper RowMapper) RowConvertor {
-	conv.mapper = mapper
+func (conv *rowConvertor) Map(rowMapper RowMapper) RowConvertor {
+	conv.mapper = rowMapper
 	return conv
 }
 
@@ -209,8 +209,8 @@ type rowsConvertor struct {
 	rowsMapper RowsMapper
 }
 
-func (rowsCon *rowsConvertor) Map(mapper RowsMapper) RowsConvertor {
-	rowsCon.rowsMapper = mapper
+func (rowsCon *rowsConvertor) Map(rowMapper RowsMapper) RowsConvertor {
+	rowsCon.rowsMapper = rowMapper
 	return rowsCon
 }
 
