@@ -34,7 +34,7 @@ func main() {
     }
 
     gdbcTemplate = template.New(AppConfig)
-    gdbcTemplate.QueryRow("select * from USERS where USER_NAME=?", "your_name")
+    user := gdbcTemplate.QueryRow("select * from USERS where USER_NAME=?", "your_name")
     .Map(func(rows *sql.Row) interface{} { return "test" })
     .ToObject()
 

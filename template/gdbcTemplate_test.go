@@ -2,12 +2,13 @@ package template_test
 
 import (
 	"database/sql"
+	"gdbcTemplate/mocks"
+	"gdbcTemplate/template"
+	"testing"
+
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/golang/mock/gomock"
-	"github.com/guoapeng/gdbcTemplate/mocks"
-	"github.com/guoapeng/gdbcTemplate/template"
 	"github.com/stretchr/testify/suite"
-	"testing"
 )
 
 func TestGdbcTemplateSuite(t *testing.T) {

@@ -3,10 +3,11 @@ package datasource_test
 import (
 	"testing"
 
+	"gdbcTemplate/datasource"
+	"gdbcTemplate/mocks"
+
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/golang/mock/gomock"
-	"github.com/guoapeng/gdbcTemplate/datasource"
-	"github.com/guoapeng/gdbcTemplate/mocks"
 	"github.com/stretchr/testify/suite"
 )
 

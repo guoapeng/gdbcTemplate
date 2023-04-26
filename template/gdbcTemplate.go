@@ -1,12 +1,14 @@
 package template
 
 import (
+	"context"
 	"database/sql"
 	"errors"
 	"log"
 
-	"github.com/guoapeng/gdbcTemplate/datasource"
-	"github.com/guoapeng/gdbcTemplate/mapper"
+	"gdbcTemplate/datasource"
+	"gdbcTemplate/mapper"
+	"gdbcTemplate/transaction"
 	propsReader "github.com/guoapeng/props"
 )
 
@@ -16,11 +18,28 @@ type GdbcTemplate interface {
 	Execute(sqlstr string, args ...interface{}) (sql.Result, error)
 	QueryForArray(sqlstr string, args ...interface{}) mapper.RowsConvertor
 	QueryRow(sqlstr string, args ...interface{}) mapper.RowConvertor
+	BeginTx() (transaction.Transaction, error)
 }
 
 type gdbcTemplate struct {
 	datasource datasource.DataSource
 	fetchSize  int
+}
+
+func (template *gdbcTemplate) BeginTx() (transaction.Transaction, error) {
+
+	if db, err := template.datasource.Open(); err == nil {
+		defer db.Close()
+		log.Println("begin transaction")
+		ctx := context.Background()
+		tx, err := db.BeginTx(ctx, nil)
+		if err != nil {
+			log.Println("fail to start a transaction: ", err)
+		}
+		return transaction.New(tx), err
+	} else {
+		return nil, errors.New("fail to open db")
+	}
 }
 
 func (template *gdbcTemplate) Update(sqlstr string, args ...interface{}) (sql.Result, error) {
