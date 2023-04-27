@@ -16,14 +16,14 @@ type RowsConvertor interface {
 	ToArray() []interface{}
 }
 
-func NewRowsConvertor(dataSource datasource.DataSource, sqlstr string, args []interface{}) RowsConvertor {
+func NewRowsConvertor(dataSource datasource.ConnManager, sqlstr string, args []interface{}) RowsConvertor {
 	return &rowsConvertor{ds: dataSource, sqlstr: sqlstr, args: args}
 }
 
 type rowsConvertor struct {
 	args       []interface{}
 	sqlstr     string
-	ds         datasource.DataSource
+	ds         datasource.ConnManager
 	rowsMapper RowsMapper
 }
 
@@ -38,8 +38,7 @@ func (rowsCon *rowsConvertor) MapTo(example interface{}) RowsConvertor {
 }
 
 func (rowsCon *rowsConvertor) ToArray() []interface{} {
-	if db, err := rowsCon.ds.Open(); err == nil {
-		defer db.Close()
+	if db, err := rowsCon.ds.GetDb(); err == nil {
 		log.Println("query using sql: ", rowsCon.sqlstr, "\nwith arguments ", rowsCon.args)
 		dataRows, err := db.Query(rowsCon.sqlstr, rowsCon.args...)
 		if err != nil {

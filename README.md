@@ -80,6 +80,20 @@ mockgen -destination mocks/appConfig.go -package mocks github.com/guoapeng/props
 
 ```
 
+replace with testify
+
+```bash
+
+cd <project_home>
+go get github.com/stretchr/testify/mock
+go get github.com/vektra/mockery/.../
+
+cd <project_home>
+
+
+```
+
+
 ## publish
 
 ### create tag
