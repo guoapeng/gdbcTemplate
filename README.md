@@ -84,15 +84,21 @@ replace with testify
 
 ```bash
 
+# install mockery
+
+go install github.com/vektra/mockery/v2@v2.25.0
+
 cd <project_home>
 go get github.com/stretchr/testify/mock
 go get github.com/vektra/mockery/.../
 
 cd <project_home>
+# generate mock structs
+mockery --recursive --name "GdbcTemplate|RowMapper|RowsMapper|Transaction|DataSource|ConnManager"
 
+mockery -r -all
 
 ```
-
 
 ## publish
 

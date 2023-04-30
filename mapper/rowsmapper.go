@@ -16,14 +16,14 @@ type RowsConvertor interface {
 	ToArray() []interface{}
 }
 
-func NewRowsConvertor(dataSource datasource.ConnManager, sqlstr string, args []interface{}) RowsConvertor {
+func NewRowsConvertor(dataSource datasource.DbManager, sqlstr string, args []interface{}) RowsConvertor {
 	return &rowsConvertor{ds: dataSource, sqlstr: sqlstr, args: args}
 }
 
 type rowsConvertor struct {
 	args       []interface{}
 	sqlstr     string
-	ds         datasource.ConnManager
+	ds         datasource.DbManager
 	rowsMapper RowsMapper
 }
 

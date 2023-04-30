@@ -15,15 +15,15 @@ type RowConvertor interface {
 	ToObject() interface{}
 }
 
-func NewRowConvertor(datasource datasource.ConnManager, sqlstr string, args []interface{}) RowConvertor {
-	return &rowConvertor{connetcM: datasource, sqlstr: sqlstr, args: args}
+func NewRowConvertor(datasource datasource.DbManager, sqlstr string, args []interface{}) RowConvertor {
+	return &rowConvertor{dbM: datasource, sqlstr: sqlstr, args: args}
 }
 
 type rowConvertor struct {
-	args     []interface{}
-	sqlstr   string
-	connetcM datasource.ConnManager
-	mapper   RowMapper
+	args   []interface{}
+	sqlstr string
+	dbM    datasource.DbManager
+	mapper RowMapper
 }
 
 func (conv *rowConvertor) Map(rowMapper RowMapper) RowConvertor {
@@ -37,7 +37,7 @@ func (conv *rowConvertor) MapTo(example interface{}) RowConvertor {
 }
 
 func (conv *rowConvertor) ToObject() interface{} {
-	if db, err := conv.connetcM.GetDb(); err == nil {
+	if db, err := conv.dbM.GetDb(); err == nil {
 		log.Println("query using sql: ", conv.sqlstr, " \nwith arguments", conv.args)
 		datarow := db.QueryRow(conv.sqlstr, conv.args...)
 		if datarow.Err() != nil {

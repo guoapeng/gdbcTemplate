@@ -20,16 +20,17 @@ type GdbcTemplate interface {
 	QueryForArray(sqlstr string, args ...interface{}) mapper.RowsConvertor
 	QueryRow(sqlstr string, args ...interface{}) mapper.RowConvertor
 	BeginTx() (transaction.Transaction, error)
+	CloseDB() error
 }
 
 type gdbcTemplate struct {
-	connetcM  datasource.ConnManager
+	dbM       datasource.DbManager
 	fetchSize int
 }
 
 func (template *gdbcTemplate) BeginTx() (transaction.Transaction, error) {
 
-	if db, err := template.connetcM.GetDb(); err == nil {
+	if db, err := template.dbM.GetDb(); err == nil {
 		log.Println("begin transaction")
 		ctx := context.Background()
 		tx, err := db.BeginTx(ctx, nil)
@@ -43,7 +44,7 @@ func (template *gdbcTemplate) BeginTx() (transaction.Transaction, error) {
 }
 
 func (template *gdbcTemplate) Update(sqlstr string, args ...interface{}) (sql.Result, error) {
-	if db, err := template.connetcM.GetDb(); err == nil {
+	if db, err := template.dbM.GetDb(); err == nil {
 		log.Println("update using sql: ", sqlstr, "\nwith arguments ", args)
 		result, updErr := db.Exec(sqlstr, args...)
 		if updErr != nil {
@@ -56,7 +57,7 @@ func (template *gdbcTemplate) Update(sqlstr string, args ...interface{}) (sql.Re
 }
 
 func (template *gdbcTemplate) Execute(sqlstr string, args ...interface{}) (sql.Result, error) {
-	if db, err := template.connetcM.GetDb(); err == nil {
+	if db, err := template.dbM.GetDb(); err == nil {
 		log.Println("Execute using sql: ", sqlstr, "\nwith arguments ", args)
 		result, err := db.Exec(sqlstr, args...)
 		if err != nil {
@@ -69,7 +70,7 @@ func (template *gdbcTemplate) Execute(sqlstr string, args ...interface{}) (sql.R
 }
 
 func (template *gdbcTemplate) Insert(sqlstr string, args ...interface{}) (sql.Result, error) {
-	if db, err := template.connetcM.GetDb(); err == nil {
+	if db, err := template.dbM.GetDb(); err == nil {
 		log.Println("Insert using sql: ", sqlstr, "\nwith arguments", args)
 		result, err := db.Exec(sqlstr, args...)
 		if err != nil {
@@ -82,17 +83,25 @@ func (template *gdbcTemplate) Insert(sqlstr string, args ...interface{}) (sql.Re
 }
 
 func (template *gdbcTemplate) QueryForArray(sqlstr string, args ...interface{}) mapper.RowsConvertor {
-	return mapper.NewRowsConvertor(template.connetcM, sqlstr, args)
+	return mapper.NewRowsConvertor(template.dbM, sqlstr, args)
 }
 
 func (template *gdbcTemplate) QueryRow(sqlstr string, args ...interface{}) mapper.RowConvertor {
-	return mapper.NewRowConvertor(template.connetcM, sqlstr, args)
+	return mapper.NewRowConvertor(template.dbM, sqlstr, args)
+}
+
+func (template *gdbcTemplate) CloseDB() error {
+	return template.dbM.Close()
 }
 
 func New(appConf propsReader.AppConfigProperties) GdbcTemplate {
-	return &gdbcTemplate{connetcM: datasource.NewConnManager(datasource.NewDataSource(appConf))}
+	return &gdbcTemplate{dbM: datasource.NewDbManager(datasource.NewDataSource(appConf))}
 }
 
 func NewWith(ds datasource.DataSource) GdbcTemplate {
-	return &gdbcTemplate{connetcM: datasource.NewConnManager(ds)}
+	return &gdbcTemplate{dbM: datasource.NewDbManager(ds)}
+}
+
+func NewWithDsAndOpenDbFn(ds datasource.DataSource, openDbFunc datasource.OpenDb) GdbcTemplate {
+	return &gdbcTemplate{dbM: datasource.NewDbManagerWithOpenDbFn(ds, openDbFunc)}
 }
