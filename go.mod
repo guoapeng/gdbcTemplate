@@ -1,4 +1,4 @@
-module gdbcTemplate
+module github.com/guoapeng/gdbcTemplate
 
 go 1.18
 

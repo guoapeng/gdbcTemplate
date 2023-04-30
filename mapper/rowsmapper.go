@@ -5,7 +5,7 @@ import (
 	"log"
 	"strings"
 
-	"gdbcTemplate/datasource"
+	"github.com/guoapeng/gdbcTemplate/datasource"
 )
 
 type RowsMapper func(rows *sql.Rows) interface{}

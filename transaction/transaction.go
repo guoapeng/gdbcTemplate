@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"log"
 
-	"gdbcTemplate/mapper"
+	"github.com/guoapeng/gdbcTemplate/mapper"
 )
 
 type Transaction interface {

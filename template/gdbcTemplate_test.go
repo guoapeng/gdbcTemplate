@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"testing"
 
-	"gdbcTemplate/mocks"
-	"gdbcTemplate/template"
+	"github.com/guoapeng/gdbcTemplate/mocks"
+	"github.com/guoapeng/gdbcTemplate/template"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/stretchr/testify/mock"

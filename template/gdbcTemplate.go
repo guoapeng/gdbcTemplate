@@ -6,9 +6,9 @@ import (
 	"errors"
 	"log"
 
-	"gdbcTemplate/datasource"
-	"gdbcTemplate/mapper"
-	"gdbcTemplate/transaction"
+	"github.com/guoapeng/gdbcTemplate/datasource"
+	"github.com/guoapeng/gdbcTemplate/mapper"
+	"github.com/guoapeng/gdbcTemplate/transaction"
 
 	propsReader "github.com/guoapeng/props"
 )

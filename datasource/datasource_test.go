@@ -1,8 +1,8 @@
 package datasource_test
 
 import (
-	"gdbcTemplate/datasource"
-	"gdbcTemplate/mocks"
+	"github.com/guoapeng/gdbcTemplate/datasource"
+	"github.com/guoapeng/gdbcTemplate/mocks"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
