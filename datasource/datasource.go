@@ -1,11 +1,8 @@
 package datasource
 
 import (
-	"database/sql"
 	"fmt"
-	"log"
 	"strconv"
-	"time"
 
 	propsReader "github.com/guoapeng/props"
 )
@@ -21,42 +18,26 @@ const (
 	CHARSET     = "CHARSET"
 )
 
-type DataSource interface {
-	Open() (*sql.DB, error)
-}
-
 type dataSource struct {
-	DriverName  string
-	UserName    string
-	Password    string
-	Network     string
-	Server      string
-	Port        int
-	DataBase    string
-	Charset     string
-	connManager ConnManager
+	DriverName string
+	UserName   string
+	Password   string
+	Network    string
+	Server     string
+	Port       int
+	DataBase   string
+	Charset    string
 }
 
-func (ds *dataSource) Open() (*sql.DB, error) {
-
-	dsn, maskedDsn := ds.format()
-
-	log.Printf("connecting to %s\n", maskedDsn)
-
-	db, err := ds.connManager.Open(ds.DriverName, dsn)
-	if err != nil {
-		log.Printf("Open database failed,err:%v\n", err)
-		return nil, err
-	} else {
-		log.Printf("connected to the database successfully!\n")
-		db.SetConnMaxLifetime(100 * time.Second)
-		db.SetMaxOpenConns(100)
-		db.SetMaxIdleConns(16)
-		return db, nil
-	}
+type DataSource interface {
+	FormatDsn() (string, string)
+	GetDriverName() string
 }
 
-func (ds *dataSource) format() (string, string) {
+func (ds *dataSource) GetDriverName() string {
+	return ds.DriverName
+}
+func (ds *dataSource) FormatDsn() (string, string) {
 
 	if ds.DriverName == "mysql" {
 		dsn := fmt.Sprintf("%s:%s@%s(%s:%d)/%s?charset=%s", ds.UserName, ds.Password, ds.Network, ds.Server,
@@ -74,21 +55,19 @@ func (ds *dataSource) format() (string, string) {
 
 		return dsn, maskedDsn
 	}
-
 }
 
-func NewDataSource(appConf propsReader.AppConfigProperties, connManager ConnManager) DataSource {
+func NewDataSource(appConf propsReader.AppConfigProperties) DataSource {
 	port, errp := strconv.Atoi(appConf.Get(PORT))
 	if errp == nil {
 		return &dataSource{DriverName: appConf.Get(DRIVER_NAME),
-			UserName:    appConf.Get(USERNAME),
-			Password:    appConf.Get(PASSWORD),
-			Network:     appConf.Get(NETWORK),
-			Server:      appConf.Get(SERVER),
-			Port:        port,
-			DataBase:    appConf.Get(DATABASE),
-			Charset:     appConf.Get(CHARSET),
-			connManager: connManager,
+			UserName: appConf.Get(USERNAME),
+			Password: appConf.Get(PASSWORD),
+			Network:  appConf.Get(NETWORK),
+			Server:   appConf.Get(SERVER),
+			Port:     port,
+			DataBase: appConf.Get(DATABASE),
+			Charset:  appConf.Get(CHARSET),
 		}
 	} else {
 		panic("failed to create data source due to invalid port number")

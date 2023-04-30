@@ -1,0 +1,17 @@
+# .mockery.yml
+inpackage: false 
+with-expecter: True 
+testonly: false 
+case: camel
+# srcpkg: database/sql
+# The directory to generate mocks in
+output: ./mocks
+name: "AppConfigProperties|\
+  GdbcTemplate|\
+  RowMapper|\
+  RowsMapper|\
+  Transaction|\
+  DataSource|\
+  Open|\
+  DbManager"
+recursive: true
