@@ -12,6 +12,7 @@ type Transaction interface {
 	Update(sqlstr string, args ...interface{}) (sql.Result, error)
 	Execute(sqlstr string, args ...interface{}) (sql.Result, error)
 	Commit() error
+	Rollback() error
 }
 
 type transaction struct {
