@@ -11,6 +11,8 @@ type Transaction interface {
 	Insert(sqlstr string, args ...interface{}) (sql.Result, error)
 	Update(sqlstr string, args ...interface{}) (sql.Result, error)
 	Execute(sqlstr string, args ...interface{}) (sql.Result, error)
+	QueryForArray(sqlstr string, args ...interface{}) mapper.RowsConvertor
+	QueryRow(sqlstr string, args ...interface{}) mapper.RowConvertor
 	Commit() error
 	Rollback() error
 }
