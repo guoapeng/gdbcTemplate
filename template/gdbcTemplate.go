@@ -46,7 +46,12 @@ func (template *gdbcTemplate) BeginTx() (transaction.Transaction, error) {
 func (template *gdbcTemplate) Update(sqlstr string, args ...interface{}) (sql.Result, error) {
 	if db, err := template.dbM.GetDb(); err == nil {
 		log.Println("update using sql: ", sqlstr, "\nwith arguments ", args)
-		result, updErr := db.Exec(sqlstr, args...)
+		preparedStmt, updErr := db.Prepare(sqlstr)
+		if updErr != nil {
+			log.Printf("prepare sql statement failed, err:%v \n", err)
+			return nil, err
+		}
+		result, updErr := preparedStmt.Exec(args...)
 		if updErr != nil {
 			log.Println("Encountering error when execting sql: ", updErr)
 		}
@@ -59,7 +64,12 @@ func (template *gdbcTemplate) Update(sqlstr string, args ...interface{}) (sql.Re
 func (template *gdbcTemplate) Execute(sqlstr string, args ...interface{}) (sql.Result, error) {
 	if db, err := template.dbM.GetDb(); err == nil {
 		log.Println("Execute using sql: ", sqlstr, "\nwith arguments ", args)
-		result, err := db.Exec(sqlstr, args...)
+		preparedStmt, err := db.Prepare(sqlstr)
+		if err != nil {
+			log.Printf("prepare sql statement failed, err:%v \n", err)
+			return nil, err
+		}
+		result, err := preparedStmt.Exec(args...)
 		if err != nil {
 			log.Println("Encountering error when execting sql: ", sqlstr, err)
 		}
@@ -72,7 +82,12 @@ func (template *gdbcTemplate) Execute(sqlstr string, args ...interface{}) (sql.R
 func (template *gdbcTemplate) Insert(sqlstr string, args ...interface{}) (sql.Result, error) {
 	if db, err := template.dbM.GetDb(); err == nil {
 		log.Println("Insert using sql: ", sqlstr, "\nwith arguments", args)
-		result, err := db.Exec(sqlstr, args...)
+		preparedStmt, err := db.Prepare(sqlstr)
+		if err != nil {
+			log.Printf("prepare sql statement failed, err:%v \n", err)
+			return nil, err
+		}
+		result, err := preparedStmt.Exec(args...)
 		if err != nil {
 			log.Println("Encountering error when inserting: ", err)
 		}

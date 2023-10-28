@@ -44,6 +44,7 @@ func (suite *GdbcTemplateSuite) TestInsert() {
 	suite.openDbFn.On("Execute", mock.Anything, mock.Anything).Return(db, nil)
 	suite.dataSource.On("GetDriverName").Return("PGX")
 	suite.dataSource.On("FormatDsn").Return("postgres://root:12345@127.0.0.1:5432/testdb", "postgres://root:******@127.0.0.1:5432/testdb")
+	mockobj.ExpectPrepare("xxx")
 	mockobj.ExpectExec("xxx")
 	suite.gdbcTemplate.Insert("xxx", "")
 	if err := mockobj.ExpectationsWereMet(); err != nil {
@@ -60,6 +61,7 @@ func (suite *GdbcTemplateSuite) TestQueryRow() {
 	suite.openDbFn.On("Execute", mock.Anything, mock.Anything).Return(db, nil)
 	suite.dataSource.On("FormatDsn").Return("postgres://root:12345@127.0.0.1:5432/testdb", "postgres://root:******@127.0.0.1:5432/testdb")
 	suite.dataSource.On("GetDriverName").Return("PGX")
+	mockobj.ExpectPrepare("select .* from OUR_USERS where USER_NAME=?")
 	mockobj.ExpectQuery("select .* from OUR_USERS where USER_NAME=?").WithArgs("eagle").
 		WillReturnRows(sqlmock.NewRows([]string{"id", "title"}).
 			AddRow(1, "one"))
@@ -79,6 +81,7 @@ func (suite *GdbcTemplateSuite) TestQueryRows() {
 	suite.openDbFn.On("Execute", mock.Anything, mock.Anything).Return(db, nil)
 	suite.dataSource.On("FormatDsn").Return("postgres://root:12345@127.0.0.1:5432/testdb", "postgres://root:******@127.0.0.1:5432/testdb")
 	suite.dataSource.On("GetDriverName").Return("PGX")
+	mockobj.ExpectPrepare("^select .* from TABLE_NAME where USER_NAME=")
 	mockobj.ExpectQuery("^select .* from TABLE_NAME where USER_NAME=").WithArgs("eagle").
 		WillReturnRows(sqlmock.NewRows([]string{"id", "title"}).
 			AddRow(1, "one").

@@ -39,7 +39,12 @@ func (conv *rowConvertor) MapTo(example interface{}) RowConvertor {
 func (conv *rowConvertor) ToObject() interface{} {
 	if db, err := conv.dbM.GetDb(); err == nil {
 		log.Println("query using sql: ", conv.sqlstr, " \nwith arguments", conv.args)
-		datarow := db.QueryRow(conv.sqlstr, conv.args...)
+		preparedStmt, err := db.Prepare(conv.sqlstr)
+		if err != nil {
+			log.Printf("prepare sql statement failed, err:%v \n", err)
+			return nil
+		}
+		datarow := preparedStmt.QueryRow(conv.args...)
 		if datarow.Err() != nil {
 			log.Println("Encountering query error: ", datarow.Err())
 		}
