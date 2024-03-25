@@ -163,6 +163,10 @@ func UserRowsMapper(rows *sql.Rows) interface{} {
 go build datasource/datasource.go
 go build mapper/rowsmapper.go
 go build template/gdbcTemplate.go
+
+# or 
+
+go build ./...
 ```
 
 ### run test
@@ -221,14 +225,19 @@ mockery -r -all
 1. remove dependency on github.com/guoapeng/props to only rely on sql.datasource
 2. support sqlite
 
-
 ## trouble shooting
 
 1. cannot find module
    in case you encountered the issue:
+
+```bash
    $ go build
    build .: cannot find module for path .
+```
 
 solution:
 replace the go build command like
-$ go build mapper/rowsmapper.go
+
+```bash
+go build mapper/rowsmapper.go
+```
