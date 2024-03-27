@@ -2,9 +2,9 @@ package mapper
 
 import (
 	"database/sql"
-	"log"
 
 	"github.com/guoapeng/gdbcTemplate/datasource"
+	"go.uber.org/zap"
 )
 
 type RowMapper func(row *sql.Row) interface{}
@@ -38,15 +38,15 @@ func (conv *rowConvertor) MapTo(example interface{}) RowConvertor {
 
 func (conv *rowConvertor) ToObject() interface{} {
 	if db, err := conv.dbM.GetDb(); err == nil {
-		log.Println("query using sql: ", conv.sqlstr, " \nwith arguments", conv.args)
+		zap.S().Debug("query using sql: ", conv.sqlstr, " \nwith arguments", conv.args)
 		preparedStmt, err := db.Prepare(conv.sqlstr)
 		if err != nil {
-			log.Printf("prepare sql statement failed, err:%v \n", err)
+			zap.S().Error("prepare sql statement failed, err:%v \n", err)
 			return nil
 		}
 		datarow := preparedStmt.QueryRow(conv.args...)
 		if datarow.Err() != nil {
-			log.Println("Encountering query error: ", datarow.Err())
+			zap.S().Error("Encountering query error: ", datarow.Err())
 		}
 		if conv.mapper != nil {
 			return conv.mapper(datarow)
