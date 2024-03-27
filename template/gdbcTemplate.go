@@ -4,11 +4,11 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"log"
 
 	"github.com/guoapeng/gdbcTemplate/datasource"
 	"github.com/guoapeng/gdbcTemplate/mapper"
 	"github.com/guoapeng/gdbcTemplate/transaction"
+	"go.uber.org/zap"
 
 	propsReader "github.com/guoapeng/props"
 )
@@ -31,11 +31,11 @@ type gdbcTemplate struct {
 func (template *gdbcTemplate) BeginTx() (transaction.Transaction, error) {
 
 	if db, err := template.dbM.GetDb(); err == nil {
-		log.Println("begin transaction")
+		zap.S().Info("begin transaction")
 		ctx := context.Background()
 		tx, err := db.BeginTx(ctx, nil)
 		if err != nil {
-			log.Println("fail to start a transaction: ", err)
+			zap.S().Error("fail to start a transaction: ", err)
 		}
 		return transaction.New(tx), err
 	} else {
@@ -45,15 +45,15 @@ func (template *gdbcTemplate) BeginTx() (transaction.Transaction, error) {
 
 func (template *gdbcTemplate) Update(sqlstr string, args ...interface{}) (sql.Result, error) {
 	if db, err := template.dbM.GetDb(); err == nil {
-		log.Println("update using sql: ", sqlstr, "\nwith arguments ", args)
+		zap.S().Debug("update using sql: ", sqlstr, "\nwith arguments ", args)
 		preparedStmt, updErr := db.Prepare(sqlstr)
 		if updErr != nil {
-			log.Printf("prepare sql statement failed, err:%v \n", err)
+			zap.S().Error("prepare sql statement failed, err:%v \n", err)
 			return nil, err
 		}
 		result, updErr := preparedStmt.Exec(args...)
 		if updErr != nil {
-			log.Println("Encountering error when execting sql: ", updErr)
+			zap.S().Error("Encountering error when execting sql: ", updErr)
 		}
 		return result, updErr
 	} else {
@@ -63,15 +63,15 @@ func (template *gdbcTemplate) Update(sqlstr string, args ...interface{}) (sql.Re
 
 func (template *gdbcTemplate) Execute(sqlstr string, args ...interface{}) (sql.Result, error) {
 	if db, err := template.dbM.GetDb(); err == nil {
-		log.Println("Execute using sql: ", sqlstr, "\nwith arguments ", args)
+		zap.S().Debug("Execute using sql: ", sqlstr, "\nwith arguments ", args)
 		preparedStmt, err := db.Prepare(sqlstr)
 		if err != nil {
-			log.Printf("prepare sql statement failed, err:%v \n", err)
+			zap.S().Error("prepare sql statement failed, err:%v \n", err)
 			return nil, err
 		}
 		result, err := preparedStmt.Exec(args...)
 		if err != nil {
-			log.Println("Encountering error when execting sql: ", sqlstr, err)
+			zap.S().Error("Encountering error when execting sql: ", sqlstr, err)
 		}
 		return result, err
 	} else {
@@ -81,15 +81,15 @@ func (template *gdbcTemplate) Execute(sqlstr string, args ...interface{}) (sql.R
 
 func (template *gdbcTemplate) Insert(sqlstr string, args ...interface{}) (sql.Result, error) {
 	if db, err := template.dbM.GetDb(); err == nil {
-		log.Println("Insert using sql: ", sqlstr, "\nwith arguments", args)
+		zap.S().Debug("Insert using sql: ", sqlstr, "\nwith arguments", args)
 		preparedStmt, err := db.Prepare(sqlstr)
 		if err != nil {
-			log.Printf("prepare sql statement failed, err:%v \n", err)
+			zap.S().Error("prepare sql statement failed, err:%v \n", err)
 			return nil, err
 		}
 		result, err := preparedStmt.Exec(args...)
 		if err != nil {
-			log.Println("Encountering error when inserting: ", err)
+			zap.S().Error("Encountering error when inserting: ", err)
 		}
 		return result, err
 	} else {

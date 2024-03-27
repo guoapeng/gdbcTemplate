@@ -2,7 +2,8 @@ package mapper
 
 import (
 	"database/sql"
-	"log"
+
+	"go.uber.org/zap"
 )
 
 func NewTxRowConvertor(tx *sql.Tx, sqlstr string, args []interface{}) RowConvertor {
@@ -27,15 +28,15 @@ func (conv *txRowConvertor) MapTo(example interface{}) RowConvertor {
 }
 
 func (conv *txRowConvertor) ToObject() interface{} {
-	log.Println("query using sql: ", conv.sqlstr, " \nwith arguments", conv.args)
+	zap.S().Debug("query using sql: ", conv.sqlstr, " \nwith arguments", conv.args)
 	preparedStmt, err := conv.tx.Prepare(conv.sqlstr)
 	if err != nil {
-		log.Printf("prepare sql statement failed, err:%v \n", err)
+		zap.S().Error("prepare sql statement failed, err:%v \n", err)
 		return nil
 	}
 	datarow := preparedStmt.QueryRow(conv.args...)
 	if datarow.Err() != nil {
-		log.Println("Encountering query error: ", datarow.Err())
+		zap.S().Error("Encountering query error: ", datarow.Err())
 		return nil
 	}
 	if conv.mapper != nil {

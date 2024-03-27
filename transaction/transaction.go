@@ -2,9 +2,9 @@ package transaction
 
 import (
 	"database/sql"
-	"log"
 
 	"github.com/guoapeng/gdbcTemplate/mapper"
+	"go.uber.org/zap"
 )
 
 type Transaction interface {
@@ -22,45 +22,45 @@ type transaction struct {
 }
 
 func (tx *transaction) Update(sqlstr string, args ...interface{}) (sql.Result, error) {
-	log.Println("update using sql: ", sqlstr, "\nwith arguments ", args)
+	zap.S().Debug("update using sql: ", sqlstr, "\nwith arguments ", args)
 	preparedStmt, err := tx.tran.Prepare(sqlstr)
 	if err != nil {
-		log.Printf("prepare sql statement failed, err:%v \n", err)
+		zap.S().Error("prepare sql statement failed, err:%v \n", err)
 		return nil, err
 	}
 	result, updErr := preparedStmt.Exec(args...)
 	if updErr != nil {
-		log.Println("Encountering error when execting sql: ", updErr)
+		zap.S().Error("Encountering error when execting sql: ", updErr)
 		return result, updErr
 	}
 	return result, updErr
 }
 
 func (tx *transaction) Execute(sqlstr string, args ...interface{}) (sql.Result, error) {
-	log.Println("Execute using sql: ", sqlstr, "\nwith arguments ", args)
+	zap.S().Debug("Execute using sql: ", sqlstr, "\nwith arguments ", args)
 	preparedStmt, err := tx.tran.Prepare(sqlstr)
 	if err != nil {
-		log.Printf("prepare sql statement failed, err:%v \n", err)
+		zap.S().Error("prepare sql statement failed, err:%v \n", err)
 		return nil, err
 	}
 	result, err := preparedStmt.Exec(args...)
 	if err != nil {
-		log.Println("Encountering error when execting sql: ", sqlstr, err)
+		zap.S().Error("Encountering error when execting sql: ", sqlstr, err)
 		return result, err
 	}
 	return result, err
 }
 
 func (tx *transaction) Insert(sqlstr string, args ...interface{}) (sql.Result, error) {
-	log.Println("Insert using sql: ", sqlstr, "\nwith arguments", args)
+	zap.S().Debug("Insert using sql: ", sqlstr, "\nwith arguments", args)
 	preparedStmt, err := tx.tran.Prepare(sqlstr)
 	if err != nil {
-		log.Printf("prepare sql statement failed, err:%v \n", err)
+		zap.S().Error("prepare sql statement failed, err:%v \n", err)
 		return nil, err
 	}
 	result, err := preparedStmt.Exec(args...)
 	if err != nil {
-		log.Println("Encountering error when inserting: ", err)
+		zap.S().Error("Encountering error when inserting: ", err)
 		return result, err
 	}
 	return result, err

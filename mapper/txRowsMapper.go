@@ -2,7 +2,8 @@ package mapper
 
 import (
 	"database/sql"
-	"log"
+
+	"go.uber.org/zap"
 )
 
 type TxRowsConvertor interface {
@@ -33,15 +34,15 @@ func (rowsCon *txRowsConvertor) MapTo(example interface{}) RowsConvertor {
 }
 
 func (rowsCon *txRowsConvertor) ToArray() []interface{} {
-	log.Println("query using sql: ", rowsCon.sqlstr, "\nwith arguments ", rowsCon.args)
+	zap.S().Debug("query using sql: ", rowsCon.sqlstr, "\nwith arguments ", rowsCon.args)
 	preparedStmt, err := rowsCon.tx.Prepare(rowsCon.sqlstr)
 	if err != nil {
-		log.Printf("Prepare statement failed, err:%v \n", err)
+		zap.S().Error("Prepare statement failed, err:%v \n", err)
 		return nil
 	}
 	dataRows, err := preparedStmt.Query(rowsCon.args...)
 	if err != nil {
-		log.Printf("Query failed, err:%v \n", err)
+		zap.S().Error("Query failed, err:%v \n", err)
 		return nil
 	}
 	defer dataRows.Close()

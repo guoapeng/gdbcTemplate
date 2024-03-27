@@ -54,7 +54,6 @@ CHARSET=utf8
 import (
     "github.com/guoapeng/gdbcTemplate/template"
     "github.com/guoapeng/props"
-    "log"
 )
 
 // sql for postgresql
@@ -79,13 +78,12 @@ const SqlUser002 = `select USER_ID,
 const SqlUser003 = "insert into USER(USER_NAME, NICKNAME, CREATE_DATE, UPDATE_DATE, USER_TYPE)" +
         "values($1, $2, $3, current_date, current_date, 'admin' );"
 
-
 func main() {
 
     var err error
 
     if AppConfig, err = propsReader.NewFactory("application", "config.properties").New(); err != nil {
-        log.Fatal("failed to load mandatory properties")
+        zap.S().Fatal("failed to load mandatory properties")
         panic(err)
     }
 
@@ -100,7 +98,7 @@ func main() {
 
     if err != nil {
         tx.Rollback()
-        log.Println("ERROR: failed to create user", err)
+        zap.S().Error("ERROR: failed to create user", err)
         return "", fmt.Errorf("failed to create user")
     }
 
@@ -240,4 +238,7 @@ replace the go build command like
 
 ```bash
 go build mapper/rowsmapper.go
+
+# or
+go build ./...
 ```
