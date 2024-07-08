@@ -42,7 +42,7 @@ func (rowsCon *txRowsConvertor) ToArray() []interface{} {
 	}
 	dataRows, err := preparedStmt.Query(rowsCon.args...)
 	if err != nil {
-		zap.S().Error("Query failed, err:%v \n", err)
+		zap.S().Errorf("Query failed, err:%v \n", err)
 		return nil
 	}
 	defer dataRows.Close()

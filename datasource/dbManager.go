@@ -38,10 +38,10 @@ func (manager *dbManager) openDb() (*sql.DB, error) {
 
 	dsn, maskedDsn := manager.ds.FormatDsn()
 
-	zap.S().Info("connecting to %s\n", maskedDsn)
+	zap.S().Infof("connecting to %s\n", maskedDsn)
 	db, err := manager.openDbFunc(manager.ds.GetDriverName(), dsn)
 	if err != nil {
-		zap.S().Error("Open database failed,err:%v\n", err)
+		zap.S().Errorf("Open database failed,err:%v\n", err)
 		return nil, err
 	} else {
 		zap.S().Info("connected to the database successfully!\n")

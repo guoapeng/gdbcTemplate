@@ -25,7 +25,7 @@ func (tx *transaction) Update(sqlstr string, args ...interface{}) (sql.Result, e
 	zap.S().Debug("update using sql: ", sqlstr, "\nwith arguments ", args)
 	preparedStmt, err := tx.tran.Prepare(sqlstr)
 	if err != nil {
-		zap.S().Error("prepare sql statement failed, err:%v \n", err)
+		zap.S().Errorf("prepare sql statement failed, err:%v \n", err)
 		return nil, err
 	}
 	result, updErr := preparedStmt.Exec(args...)
@@ -40,7 +40,7 @@ func (tx *transaction) Execute(sqlstr string, args ...interface{}) (sql.Result, 
 	zap.S().Debug("Execute using sql: ", sqlstr, "\nwith arguments ", args)
 	preparedStmt, err := tx.tran.Prepare(sqlstr)
 	if err != nil {
-		zap.S().Error("prepare sql statement failed, err:%v \n", err)
+		zap.S().Errorf("prepare sql statement failed, err:%v \n", err)
 		return nil, err
 	}
 	result, err := preparedStmt.Exec(args...)
@@ -55,7 +55,7 @@ func (tx *transaction) Insert(sqlstr string, args ...interface{}) (sql.Result, e
 	zap.S().Debug("Insert using sql: ", sqlstr, "\nwith arguments", args)
 	preparedStmt, err := tx.tran.Prepare(sqlstr)
 	if err != nil {
-		zap.S().Error("prepare sql statement failed, err:%v \n", err)
+		zap.S().Errorf("prepare sql statement failed, err:%v \n", err)
 		return nil, err
 	}
 	result, err := preparedStmt.Exec(args...)

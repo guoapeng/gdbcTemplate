@@ -42,12 +42,12 @@ func (rowsCon *rowsConvertor) ToArray() []interface{} {
 		zap.S().Debug("query using sql: ", rowsCon.sqlstr, "\nwith arguments ", rowsCon.args)
 		preparedStmt, err := db.Prepare(rowsCon.sqlstr)
 		if err != nil {
-			zap.S().Error("prepare sql statement failed, err:%v \n", err)
+			zap.S().Errorf("prepare sql statement failed, err:%v \n", err)
 			return nil
 		}
 		dataRows, err := preparedStmt.Query(rowsCon.args...)
 		if err != nil {
-			zap.S().Error("query failed, err:%v \n", err)
+			zap.S().Errorf("query failed, err:%v \n", err)
 			return nil
 		}
 		defer dataRows.Close()

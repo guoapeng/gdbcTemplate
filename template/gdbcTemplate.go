@@ -66,7 +66,7 @@ func (template *gdbcTemplate) Execute(sqlstr string, args ...interface{}) (sql.R
 		zap.S().Debug("Execute using sql: ", sqlstr, "\nwith arguments ", args)
 		preparedStmt, err := db.Prepare(sqlstr)
 		if err != nil {
-			zap.S().Error("prepare sql statement failed, err:%v \n", err)
+			zap.S().Errorf("prepare sql statement failed, err:%v \n", err)
 			return nil, err
 		}
 		result, err := preparedStmt.Exec(args...)
@@ -84,7 +84,7 @@ func (template *gdbcTemplate) Insert(sqlstr string, args ...interface{}) (sql.Re
 		zap.S().Debug("Insert using sql: ", sqlstr, "\nwith arguments", args)
 		preparedStmt, err := db.Prepare(sqlstr)
 		if err != nil {
-			zap.S().Error("prepare sql statement failed, err:%v \n", err)
+			zap.S().Errorf("prepare sql statement failed, err:%v \n", err)
 			return nil, err
 		}
 		result, err := preparedStmt.Exec(args...)

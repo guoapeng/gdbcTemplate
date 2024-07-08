@@ -41,7 +41,7 @@ func (conv *rowConvertor) ToObject() interface{} {
 		zap.S().Debug("query using sql: ", conv.sqlstr, " \nwith arguments", conv.args)
 		preparedStmt, err := db.Prepare(conv.sqlstr)
 		if err != nil {
-			zap.S().Error("prepare sql statement failed, err:%v \n", err)
+			zap.S().Errorf("prepare sql statement failed, err:%v \n", err)
 			return nil
 		}
 		datarow := preparedStmt.QueryRow(conv.args...)
