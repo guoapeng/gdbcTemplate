@@ -26,6 +26,9 @@ func (manager *dbManager) GetDb() (*sql.DB, error) {
 		return manager.db, nil
 	} else {
 		if db, err := manager.openDb(); err == nil {
+			if err := db.Ping(); err != nil {
+				return nil, errors.New("failed to connect to db")
+			}
 			manager.db = db
 			return manager.db, nil
 		} else {
