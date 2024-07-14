@@ -23,12 +23,7 @@ type transaction struct {
 
 func (tx *transaction) Update(sqlstr string, args ...interface{}) (sql.Result, error) {
 	zap.S().Debug("update using sql: ", sqlstr, "\nwith arguments ", args)
-	preparedStmt, err := tx.tran.Prepare(sqlstr)
-	if err != nil {
-		zap.S().Errorf("prepare sql statement failed, err:%v \n", err)
-		return nil, err
-	}
-	result, updErr := preparedStmt.Exec(args...)
+	result, updErr := tx.tran.Exec(sqlstr, args...)
 	if updErr != nil {
 		zap.S().Error("Encountering error when execting sql: ", updErr)
 		return result, updErr
@@ -38,12 +33,7 @@ func (tx *transaction) Update(sqlstr string, args ...interface{}) (sql.Result, e
 
 func (tx *transaction) Execute(sqlstr string, args ...interface{}) (sql.Result, error) {
 	zap.S().Debug("Execute using sql: ", sqlstr, "\nwith arguments ", args)
-	preparedStmt, err := tx.tran.Prepare(sqlstr)
-	if err != nil {
-		zap.S().Errorf("prepare sql statement failed, err:%v \n", err)
-		return nil, err
-	}
-	result, err := preparedStmt.Exec(args...)
+	result, err := tx.tran.Exec(sqlstr, args...)
 	if err != nil {
 		zap.S().Error("Encountering error when execting sql: ", sqlstr, err)
 		return result, err
@@ -53,12 +43,7 @@ func (tx *transaction) Execute(sqlstr string, args ...interface{}) (sql.Result, 
 
 func (tx *transaction) Insert(sqlstr string, args ...interface{}) (sql.Result, error) {
 	zap.S().Debug("Insert using sql: ", sqlstr, "\nwith arguments", args)
-	preparedStmt, err := tx.tran.Prepare(sqlstr)
-	if err != nil {
-		zap.S().Errorf("prepare sql statement failed, err:%v \n", err)
-		return nil, err
-	}
-	result, err := preparedStmt.Exec(args...)
+	result, err := tx.tran.Exec(sqlstr, args...)
 	if err != nil {
 		zap.S().Error("Encountering error when inserting: ", err)
 		return result, err

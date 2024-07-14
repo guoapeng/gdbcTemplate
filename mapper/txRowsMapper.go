@@ -35,12 +35,7 @@ func (rowsCon *txRowsConvertor) MapTo(example interface{}) RowsConvertor {
 
 func (rowsCon *txRowsConvertor) ToArray() []interface{} {
 	zap.S().Debug("query using sql: ", rowsCon.sqlstr, "\nwith arguments ", rowsCon.args)
-	preparedStmt, err := rowsCon.tx.Prepare(rowsCon.sqlstr)
-	if err != nil {
-		zap.S().Error("Prepare statement failed, err:%v \n", err)
-		return nil
-	}
-	dataRows, err := preparedStmt.Query(rowsCon.args...)
+	dataRows, err :=  rowsCon.tx.Query(rowsCon.sqlstr, rowsCon.args...)
 	if err != nil {
 		zap.S().Errorf("Query failed, err:%v \n", err)
 		return nil

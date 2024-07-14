@@ -46,12 +46,7 @@ func (template *gdbcTemplate) BeginTx() (transaction.Transaction, error) {
 func (template *gdbcTemplate) Update(sqlstr string, args ...interface{}) (sql.Result, error) {
 	if db, err := template.dbM.GetDb(); err == nil {
 		zap.S().Debug("update using sql: ", sqlstr, "\nwith arguments ", args)
-		preparedStmt, updErr := db.Prepare(sqlstr)
-		if updErr != nil {
-			zap.S().Error("prepare sql statement failed, err:%v \n", err)
-			return nil, err
-		}
-		result, updErr := preparedStmt.Exec(args...)
+		result, updErr := db.Exec(sqlstr, args...)
 		if updErr != nil {
 			zap.S().Error("Encountering error when execting sql: ", updErr)
 		}
@@ -64,12 +59,7 @@ func (template *gdbcTemplate) Update(sqlstr string, args ...interface{}) (sql.Re
 func (template *gdbcTemplate) Execute(sqlstr string, args ...interface{}) (sql.Result, error) {
 	if db, err := template.dbM.GetDb(); err == nil {
 		zap.S().Debug("Execute using sql: ", sqlstr, "\nwith arguments ", args)
-		preparedStmt, err := db.Prepare(sqlstr)
-		if err != nil {
-			zap.S().Errorf("prepare sql statement failed, err:%v \n", err)
-			return nil, err
-		}
-		result, err := preparedStmt.Exec(args...)
+		result, err := db.Exec(sqlstr, args...)
 		if err != nil {
 			zap.S().Error("Encountering error when execting sql: ", sqlstr, err)
 		}
@@ -82,12 +72,7 @@ func (template *gdbcTemplate) Execute(sqlstr string, args ...interface{}) (sql.R
 func (template *gdbcTemplate) Insert(sqlstr string, args ...interface{}) (sql.Result, error) {
 	if db, err := template.dbM.GetDb(); err == nil {
 		zap.S().Debug("Insert using sql: ", sqlstr, "\nwith arguments", args)
-		preparedStmt, err := db.Prepare(sqlstr)
-		if err != nil {
-			zap.S().Errorf("prepare sql statement failed, err:%v \n", err)
-			return nil, err
-		}
-		result, err := preparedStmt.Exec(args...)
+		result, err := db.Exec(sqlstr, args...)
 		if err != nil {
 			zap.S().Error("Encountering error when inserting: ", err)
 		}

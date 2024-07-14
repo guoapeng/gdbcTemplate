@@ -40,12 +40,8 @@ func (rowsCon *rowsConvertor) MapTo(example interface{}) RowsConvertor {
 func (rowsCon *rowsConvertor) ToArray() []interface{} {
 	if db, err := rowsCon.ds.GetDb(); err == nil {
 		zap.S().Debugf("query using sql: %s \nwith arguments %v ", rowsCon.sqlstr, rowsCon.args)
-		preparedStmt, err := db.Prepare(rowsCon.sqlstr)
-		if err != nil {
-			zap.S().Errorf("prepare sql statement failed, err:%v \n", err)
-			return nil
-		}
-		dataRows, err := preparedStmt.Query(rowsCon.args...)
+		
+		dataRows, err := db.Query(rowsCon.sqlstr, rowsCon.args...)
 
 		if err != nil {
 			zap.S().Errorf("query failed, err:%v \n", err)

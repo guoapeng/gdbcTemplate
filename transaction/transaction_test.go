@@ -50,7 +50,6 @@ func (suite *TransactionSuite) TestInsert() {
 	suite.openDbFn.On("Execute", mock.Anything, mock.Anything).Return(db, nil)
 
 	mockObj.ExpectBegin()
-	mockObj.ExpectPrepare("insert into test_table\\(id, name\\) values\\(100, 'test'\\)")
 	mockObj.ExpectExec("insert into test_table\\(id, name\\) values\\(100, 'test'\\)").WillReturnResult(sqlmock.NewResult(100, 1))
 	transaction, err := suite.gdbcTemplate.BeginTx()
 	if err != nil {
