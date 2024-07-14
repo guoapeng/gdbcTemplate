@@ -45,8 +45,8 @@ func (manager *dbManager) openDb() (*sql.DB, error) {
 		return nil, err
 	} else {
 		zap.S().Info("connected to the database successfully!\n")
-		db.SetConnMaxLifetime(100 * time.Second)
-		db.SetMaxOpenConns(100)
+		db.SetConnMaxLifetime(24 * time.Hour)
+		db.SetMaxOpenConns(50)
 		db.SetMaxIdleConns(16)
 		return db, nil
 	}
@@ -60,7 +60,6 @@ func (manager *dbManager) Close() error {
 		zap.S().Error("db is not opened, need not to close")
 		return nil
 	}
-
 }
 
 func NewDbManager(ds DataSource) DbManager {
